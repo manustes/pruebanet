@@ -11,12 +11,18 @@ function createInvoice (req, res) {
     invoiceService.createInvoice(req, res);
 };
 
-function getProductos (req, res) {
+function getFacturas (req, res) {
 
-    invoiceService.getProductos(req, res);
+    invoiceService.getFacturas(req, res);
+};
+
+function getDetalles (req, res) {
+
+    invoiceService.getDetalles(req, res);
 };
 
 module.exports = {
     createInvoice,
-    getProductos
+    getFacturas,
+    getDetalles
 };

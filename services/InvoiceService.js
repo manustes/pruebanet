@@ -5,6 +5,7 @@
 
 
 var invoices = [];
+var cabeceras = [];
 
 var monedas = [
     { moneda: "COP", tasacambio: 1 },
@@ -88,12 +89,40 @@ function createInvoice(req, res) {
 };
 
 
-function getProductos(req, res) {
+function getFacturas(req, res) {
 
-    console.log("servicio productos");
+    Cabecera.find((err, cabeceras)=>{
+        if(err)
+            res.status(500).jsonp("Error al consultar las facturas.");
+        else{
+            if(!cabeceras)
+                res.status(404).jsonp("no existen facturas registradas.");
+            else
+                res.status(200).jsonp({facturas: cabeceras});
+        }
+    }).sort('fecha');
+
+};
+
+function getDetalles(req, res) {
+
+    var cabeceraId = req.params.id;
+
+    Detalle.find({cabecera: cabeceraId},(err, detalles)=>{
+        if(err)
+            res.status(500).jsonp("Error al consultar las facturas.");
+        else{
+            if(!detalles)
+                res.status(404).jsonp("no existen facturas registradas.");
+            else
+                res.status(200).jsonp({detalles: detalles});
+        }
+    });
+
 };
 
 module.exports = {
     createInvoice,
-    getProductos
+    getFacturas,
+    getDetalles
 };

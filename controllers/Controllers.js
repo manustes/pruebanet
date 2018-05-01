@@ -19,7 +19,8 @@ function Controllers(app){
 
     //TODO
     app.post('/api/invoice', InvoicesController.createInvoice);
-    app.post('/api/productos', InvoicesController.getProductos);
+    app.get('/api/facturas', InvoicesController.getFacturas);
+    app.get('/api/detalles/:id', InvoicesController.getDetalles);
 
   }
 

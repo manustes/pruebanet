@@ -1,7 +1,7 @@
-
-
 <!doctype html>
+
 <html lang="en" ng-app="GeekStore">
+
 <head>
     <title> Geek Store</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,87 +12,146 @@
             color: red;
             font-size: 1.2em;
         }
+
         li {
             margin-bottom: 7px;
             font-size: 1.2em;
         }
 
-        li > button {
+        li>button {
 
             margin-left: 6px;
         }
-        button > span {
+
+        button>span {
             color: green;
         }
     </style>
 
     <script src="javascripts/angular.min.js"></script>
     <script src="javascripts/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.0.16/jspdf.plugin.autotable.js"></script>
 
 
 </head>
+
 <body>
-<div class="container" ng-controller="ProductsController" >
-    <h1>Tienda de Figuras de Coleccion</h1>
+    <div class="container" ng-controller="ProductsController">
+        <h1>Tienda de Figuras de Coleccion</h1>
 
-    <div class="row">
+        <div class="row">
 
-        <!-- To Buy List -->
-        <div class="col-md-8" >
+            <!-- To Buy List -->
+            <div class="col-md-8">
 
 
-            <label for="user"> Producto: 
-                
-            <select class="form-control" ng-model="product" ng-options="venta.nombre for venta in productosVenta">
-            </select>
+                <label for="user"> Producto:
 
-            </label>
-            <label for="quantity">Cantidad: <input class="form-control" ng-model="quantity" id="quantity"> </label>
-            
-            <h4>Precio: {{product.precio}}</h1>
-            <h4>Moneda: {{product.moneda}}</h1>
+                    <select class="form-control" ng-model="product" ng-options="venta.nombre for venta in productosVenta">
+                    </select>
 
-            <button class="btn btn-default" ng-click="addProduct()"><span class="glyphicon glyphicon-ok"></span> Añadir Producto</button></br>
-            <h2>Productos Agregados</h2>
-            <ul >
-                <li ng-repeat=" product in products" >
-                    Name: {{product.name}} , Quantity: {{product.quantity}}  Value:  {{product.cambio}}   {{product.value | currency:"$"}}
-                    <button class="btn btn-default" ng-click="removeProduct(product.name)"><span class="glyphicon glyphicon-remove"></span> Remover del carrito</button>
-                </li>
-            </ul>
-             <button class="btn btn-default" ng-click="buyProducts()"><span class="glyphicon glyphicon-download"></span> Comprar</button>
+                </label>
+                <label for="quantity">Cantidad:
+                    <input class="form-control" ng-model="quantity" id="quantity"> </label>
+
+                <h4>Precio: {{product.precio| currency:"$"}}</h1>
+                    <h4>Moneda: {{product.moneda}}</h1>
+
+                        <button class="btn btn-default" ng-click="addProduct()">
+                            <span class="glyphicon glyphicon-ok"></span> Añadir Producto</button>
+                        </br>
+                        <h2>Productos Agregados</h2>
+                        <ul>
+                            <li ng-repeat=" product in products">
+                                Producto: {{product.name}} , Cantidad: {{product.quantity}} Precio: {{product.cambio}} {{product.value | currency:"$"}}
+                                <button class="btn btn-default" ng-click="removeProduct(product.name)">
+                                    <span class="glyphicon glyphicon-remove"></span> Remover del carrito</button>
+                            </li>
+                        </ul>
+                        <button class="btn btn-default" ng-click="buyProducts()">
+                            <span class="glyphicon glyphicon-download"></span> Comprar</button>
+
+            </div>
+
+            <!-- Already Bought List -->
 
         </div>
 
-        <!-- Already Bought List -->
-
-    </div>
-
         <div class="row">
-                        <div class="col-md-6" >
+            <div class="col-md-6">
                 <div class="row">
                     <h2>Factura emitida </h2>
-                   <span  class="emptyMessage">Factura de la compra actualmente realizada</span>
+                    <table class="table table-condensed" ng-if="ultimacompra != ''">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>No. Articulos Comprados</th>
+                                <th>Valor Neto</th>
+                                <th>IVA</th>
+                                <th>Valor Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>{{ultimacompra.cliente}}</td>
+                                <td>{{ultimacompra.articulos}}</td>
+                                <td>{{ultimacompra.valorneto | currency:"$"}}</td>
+                                <td>{{ultimacompra.valoriva | currency:"$"}}</td>
+                                <td>{{ultimacompra.valortotal | currency:"$"}}</td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
                 </div>
                 <div class="row">
-                    <div class="col-md-6"   >
+                    <div class="col-md-6">
 
                         <h3>Detalle:</h3>
-                        <button class="btn btn-default" ng-click="updateValue()"><span class="glyphicon glyphicon-upload"></span> Imprimir</button>
+                        <button class="btn btn-default" ng-click="imprimirDetalle()">
+                            <span class="glyphicon glyphicon-upload"></span> Imprimir</button>
 
                     </div>
 
 
                 </div>
-                </div>
+            </div>
 
-            <div class="col-md-6" >
+            <div class="col-md-6">
                 <div class="row">
                     <h2>Resumen de compras realizadas </h2>
-                    <span  class="emptyMessage"> Detalle de todas las compras realizadas</span>
+                    <table class="table table-condensed table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>No. Articulos Comprados</th>
+                                    <th>Valor Neto</th>
+                                    <th>IVA</th>
+                                    <th>Valor Total</th>
+                                    <th>Fecha de Compra</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+    
+                            <tbody>
+                                <tr ng-repeat="factura in facturas">
+                                    <td>{{factura.cliente}}</td>
+                                    <td>{{factura.articulos}}</td>
+                                    <td>{{factura.valorneto | currency:"$"}}</td>
+                                    <td>{{factura.valoriva | currency:"$"}}</td>
+                                    <td>{{factura.valortotal | currency:"$"}}</td>
+                                    <td>{{factura.fecha}}</td>
+                                    <td><button class="btn btn-default" ng-click="imprimirDetalle(factura)">
+                                            <span class="glyphicon glyphicon-download"></span> imprimir</button></td>
+                                </tr>
+                            </tbody>
+    
+                        </table>
                 </div>
                 <div class="row">
-                    <div class="col-md-6"   >
+                    <div class="col-md-6">
 
 
 
@@ -105,7 +164,8 @@
         </div>
 
 
-</div>
+    </div>
 
 </body>
+
 </html>
